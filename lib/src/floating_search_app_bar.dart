@@ -88,6 +88,9 @@ class FloatingSearchAppBar extends ImplicitlyAnimatedWidget {
   /// {@macro floating_search_bar.automaticallyImplyBackButton}
   final bool automaticallyImplyBackButton;
 
+  /// {@macro floating_search_bar.willPopBack}
+  final bool willPopBack;
+
   /// Hides the keyboard a [Scrollable] inside the [body] was scrolled and
   /// shows it again when the user scrolls to the top.
   final bool hideKeyboardOnDownScroll;
@@ -124,6 +127,9 @@ class FloatingSearchAppBar extends ImplicitlyAnimatedWidget {
 
   /// {@macro floating_search_bar.onFocusChanged}
   final OnFocusChangedCallback? onFocusChanged;
+
+  /// {@macro floating_search_bar.onBarTaped}
+  final VoidCallback? onBarTaped;
 
   /// {@macro floating_search_bar.controller}
   final FloatingSearchBarController? controller;
@@ -164,6 +170,7 @@ class FloatingSearchAppBar extends ImplicitlyAnimatedWidget {
     this.automaticallyImplyDrawerHamburger = true,
     this.hideKeyboardOnDownScroll = false,
     this.automaticallyImplyBackButton = true,
+    this.willPopBack=false,
     this.progress = 0.0,
     this.transitionDuration = const Duration(milliseconds: 500),
     this.transitionCurve = Curves.easeOut,
@@ -175,6 +182,7 @@ class FloatingSearchAppBar extends ImplicitlyAnimatedWidget {
     this.onQueryChanged,
     this.onSubmitted,
     this.onFocusChanged,
+    this.onBarTaped,
     this.controller,
     this.textInputAction = TextInputAction.search,
     this.textInputType = TextInputType.text,
@@ -482,6 +490,7 @@ class FloatingSearchAppBarState extends ImplicitlyAnimatedWidgetState<
         } else if (!isAppBar) {
           isOpen = true;
         }
+        widget.onBarTaped?.call();
       },
       child: Material(
         color: backgroundColor,
@@ -496,6 +505,9 @@ class FloatingSearchAppBarState extends ImplicitlyAnimatedWidgetState<
 
     return WillPopScope(
       onWillPop: () async {
+        if(widget.willPopBack){
+          return true;
+        }
         if (isOpen && !widget.alwaysOpened) {
           isOpen = false;
           return false;
